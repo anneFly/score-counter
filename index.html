@@ -7,7 +7,25 @@
     <title>Score Counter</title>
   </head>
   <body>
-    <script type="text/javascript" src="main.js"></script>
-    <script type="text/javascript">window.onload=function(){Elm.Main.fullscreen()}</script>
+    <script src="main.js"></script>
+    <script>
+      (function () {
+        window.onload = function () {
+          var app = Elm.Main.fullscreen();
+          app.ports.activateFullscreen.subscribe( function () {
+              var element = document.querySelector('.app');
+              if (element.requestFullscreen) {
+                element.requestFullscreen();
+              } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+              } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+              } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+              }
+          });
+        };
+      }());
+    </script>
   </body>
 </html>
