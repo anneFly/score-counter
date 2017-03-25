@@ -8,11 +8,13 @@
     <title>Score Counter V2</title>
   </head>
   <body>
+    <audio id="sound-effect" src="sounds/tap.mp3"></audio>
     <script src="main.js"></script>
     <script>
       (function () {
         window.onload = function () {
           var app = Elm.Main.fullscreen();
+          var audio = document.getElementById('sound-effect');
           app.ports.activateFullscreen.subscribe( function () {
             var element = document.querySelector('.app');
             if (element.requestFullscreen) {
@@ -35,6 +37,9 @@
             } else if (document.msExitFullscreen) {
               document.msExitFullscreen();
             }
+          });
+          app.ports.playSound.subscribe( function () {
+            audio.play();
           });
         };
       }());

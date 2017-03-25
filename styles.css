@@ -58,19 +58,32 @@ html, body {
   height: 100%;
   position: relative;
 }
-.sc-score {
+.sc-scores {
   flex-basis: 20%;
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: flex-start;
+}
+.sc-p-left .sc-scores {
+  flex-direction: row-reverse;
+}
+.sc-score {
   font-size: 3em;
   font-weight: bold;
   color: #ffff00;
 }
-.sc-p-left .sc-score {
-  align-self: flex-end;
+.sc-last-actions {
+  flex-grow: 1;
+  display: flex;
 }
-.sc-p-right .sc-score {
-  align-self: flex-start;
+.sc-p-left .sc-last-actions {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+.sc-last-actions div {
+  text-align: center;
+  flex-basis: 2em;
 }
 .sc-count-value {
   z-index: 10;

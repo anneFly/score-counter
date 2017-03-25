@@ -15,12 +15,14 @@ main =
 
 type alias Player =
     { authority : Int
+    , lastActions : List Int
     }
 
 
 initPlayer : Player
 initPlayer =
     { authority = 50
+    , lastActions = []
     }
 
 
@@ -49,6 +51,9 @@ port activateFullscreen : String -> Cmd msg
 
 
 port deactivateFullscreen : String -> Cmd msg
+
+
+port playSound : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg
@@ -84,10 +89,11 @@ update msg model =
                 player1 =
                     { p1
                         | authority = p1.authority + val
+                        , lastActions = val :: p1.lastActions
                     }
 
                 player2 =
-                    p2
+                    { p2 | lastActions = [] }
 
                 m =
                     { model
@@ -95,7 +101,7 @@ update msg model =
                         , p2 = player2
                     }
             in
-                ( m, Cmd.none )
+                ( m, playSound "" )
 
         Add val P2 ->
             let
@@ -108,15 +114,16 @@ update msg model =
                 player2 =
                     { p2
                         | authority = p2.authority + val
+                        , lastActions = val :: p2.lastActions
                     }
 
                 player1 =
-                    p1
+                    { p1 | lastActions = [] }
 
                 m =
                     { model | p2 = player2, p1 = player1 }
             in
-                ( m, Cmd.none )
+                ( m, playSound "" )
 
         FullscreenMode on ->
             let
@@ -127,6 +134,10 @@ update msg model =
                     ( m, activateFullscreen "" )
                 else
                     ( m, deactivateFullscreen "" )
+
+
+
+-- views
 
 
 fullScreenButton : Model -> Html Msg
@@ -141,6 +152,11 @@ fullScreenButton model =
                 [ span [ class "oi", attribute "data-glyph" "fullscreen-exit", title "fullscreen" ] [] ]
 
 
+lastAction : Int -> Html Msg
+lastAction value =
+    div [ class "sc-read" ] [ text (toString value) ]
+
+
 score : Model -> String -> Html Msg
 score model playerPosition =
     let
@@ -150,8 +166,11 @@ score model playerPosition =
             else
                 model.p2
     in
-        div [ class "sc-score" ]
-            [ span [ class "sc-read" ] [ text (toString player.authority) ] ]
+        div [ class "sc-scores" ]
+            [ div [ class "sc-score" ]
+                [ span [ class "sc-read" ] [ text (toString player.authority) ] ]
+            , div [ class "sc-last-actions" ] (List.map lastAction player.lastActions)
+            ]
 
 
 counter : String -> Int -> Html Msg

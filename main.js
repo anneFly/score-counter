@@ -8260,6 +8260,21 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Main$lastAction = function (value) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(
+				_elm_lang$core$Basics$toString(value)),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Main$score = F2(
 	function (model, playerPosition) {
 		var player = _elm_lang$core$Native_Utils.eq(playerPosition, 'left') ? model.p1 : model.p2;
@@ -8267,31 +8282,56 @@ var _user$project$Main$score = F2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('sc-score'),
+				_0: _elm_lang$html$Html_Attributes$class('sc-scores'),
 				_1: {ctor: '[]'}
 			},
 			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$span,
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+						_0: _elm_lang$html$Html_Attributes$class('sc-score'),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(player.authority)),
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(player.authority)),
+								_1: {ctor: '[]'}
+							}),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('sc-last-actions'),
+							_1: {ctor: '[]'}
+						},
+						A2(_elm_lang$core$List$map, _user$project$Main$lastAction, player.lastActions)),
+					_1: {ctor: '[]'}
+				}
 			});
 	});
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$initPlayer = {authority: 50};
+var _user$project$Main$initPlayer = {
+	authority: 50,
+	lastActions: {ctor: '[]'}
+};
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: false},
@@ -8307,39 +8347,68 @@ var _user$project$Main$deactivateFullscreen = _elm_lang$core$Native_Platform.out
 	function (v) {
 		return v;
 	});
+var _user$project$Main$playSound = _elm_lang$core$Native_Platform.outgoingPort(
+	'playSound',
+	function (v) {
+		return v;
+	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		if (_p0.ctor === 'Add') {
 			if (_p0._1.ctor === 'P1') {
-				var p2 = model.p2;
-				var player2 = p2;
-				var p1 = model.p1;
-				var player1 = _elm_lang$core$Native_Utils.update(
-					p1,
-					{authority: p1.authority + _p0._0});
-				var m = _elm_lang$core$Native_Utils.update(
-					model,
-					{p1: player1, p2: player2});
-				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
-			} else {
-				var p1 = model.p1;
-				var player1 = p1;
+				var _p1 = _p0._0;
 				var p2 = model.p2;
 				var player2 = _elm_lang$core$Native_Utils.update(
 					p2,
-					{authority: p2.authority + _p0._0});
+					{
+						lastActions: {ctor: '[]'}
+					});
+				var p1 = model.p1;
+				var player1 = _elm_lang$core$Native_Utils.update(
+					p1,
+					{
+						authority: p1.authority + _p1,
+						lastActions: {ctor: '::', _0: _p1, _1: p1.lastActions}
+					});
+				var m = _elm_lang$core$Native_Utils.update(
+					model,
+					{p1: player1, p2: player2});
+				return {
+					ctor: '_Tuple2',
+					_0: m,
+					_1: _user$project$Main$playSound('')
+				};
+			} else {
+				var _p2 = _p0._0;
+				var p1 = model.p1;
+				var player1 = _elm_lang$core$Native_Utils.update(
+					p1,
+					{
+						lastActions: {ctor: '[]'}
+					});
+				var p2 = model.p2;
+				var player2 = _elm_lang$core$Native_Utils.update(
+					p2,
+					{
+						authority: p2.authority + _p2,
+						lastActions: {ctor: '::', _0: _p2, _1: p2.lastActions}
+					});
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
 					{p2: player2, p1: player1});
-				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: m,
+					_1: _user$project$Main$playSound('')
+				};
 			}
 		} else {
-			var _p1 = _p0._0;
+			var _p3 = _p0._0;
 			var m = _elm_lang$core$Native_Utils.update(
 				model,
-				{fullscreen: _p1});
-			return _p1 ? {
+				{fullscreen: _p3});
+			return _p3 ? {
 				ctor: '_Tuple2',
 				_0: m,
 				_1: _user$project$Main$activateFullscreen('')
@@ -8350,9 +8419,10 @@ var _user$project$Main$update = F2(
 			};
 		}
 	});
-var _user$project$Main$Player = function (a) {
-	return {authority: a};
-};
+var _user$project$Main$Player = F2(
+	function (a, b) {
+		return {authority: a, lastActions: b};
+	});
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
 		return {p1: a, p2: b, fullscreen: c};
@@ -8363,8 +8433,8 @@ var _user$project$Main$FullscreenMode = function (a) {
 	return {ctor: 'FullscreenMode', _0: a};
 };
 var _user$project$Main$fullScreenButton = function (model) {
-	var _p2 = model.fullscreen;
-	if (_p2 === false) {
+	var _p4 = model.fullscreen;
+	if (_p4 === false) {
 		return A2(
 			_elm_lang$html$Html$a,
 			{
