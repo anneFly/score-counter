@@ -1,8 +1,8 @@
 port module Main exposing (..)
 
-import Html exposing (Html, button, div, text, span, br)
+import Html exposing (Html, button, div, text, span, br, a)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, title, attribute)
 
 
 main =
@@ -15,21 +15,19 @@ main =
 
 type alias Player =
     { authority : Int
-    , lastActions : List Int
     }
 
 
 initPlayer : Player
 initPlayer =
     { authority = 50
-    , lastActions = []
     }
 
 
 type alias Model =
     { p1 : Player
     , p2 : Player
-    , fullscreen : Maybe Bool
+    , fullscreen : Bool
     }
 
 
@@ -37,7 +35,7 @@ init : ( Model, Cmd Msg )
 init =
     ( { p1 = initPlayer
       , p2 = initPlayer
-      , fullscreen = Nothing
+      , fullscreen = False
       }
     , Cmd.none
     )
@@ -48,6 +46,9 @@ init =
 
 
 port activateFullscreen : String -> Cmd msg
+
+
+port deactivateFullscreen : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg
@@ -83,13 +84,10 @@ update msg model =
                 player1 =
                     { p1
                         | authority = p1.authority + val
-                        , lastActions = (List.append p1.lastActions [ val ])
                     }
 
                 player2 =
-                    { p2
-                        | lastActions = []
-                    }
+                    p2
 
                 m =
                     { model
@@ -110,11 +108,10 @@ update msg model =
                 player2 =
                     { p2
                         | authority = p2.authority + val
-                        , lastActions = (List.append p2.lastActions [ val ])
                     }
 
                 player1 =
-                    { p1 | lastActions = [] }
+                    p1
 
                 m =
                     { model | p2 = player2, p1 = player1 }
@@ -124,55 +121,44 @@ update msg model =
         FullscreenMode on ->
             let
                 m =
-                    { model | fullscreen = Just on }
+                    { model | fullscreen = on }
             in
                 if on then
                     ( m, activateFullscreen "" )
                 else
-                    ( m, Cmd.none )
+                    ( m, deactivateFullscreen "" )
 
 
+fullScreenButton : Model -> Html Msg
+fullScreenButton model =
+    case model.fullscreen of
+        False ->
+            a [ onClick (FullscreenMode True) ]
+                [ span [ class "oi", attribute "data-glyph" "fullscreen-enter", title "fullscreen" ] [] ]
 
--- View
-
-
-concatLastActions : List Int -> Html Msg
-concatLastActions actions =
-    div [] (List.map viewLastAction actions)
-
-
-viewLastAction : Int -> Html Msg
-viewLastAction n =
-    if n > 0 then
-        span [ class "action plus" ] [ text ("+" ++ (toString n)) ]
-    else
-        span [ class "action minus" ] [ text (toString n) ]
+        True ->
+            a [ onClick (FullscreenMode False) ]
+                [ span [ class "oi", attribute "data-glyph" "fullscreen-exit", title "fullscreen" ] [] ]
 
 
-viewButton : Int -> Html Msg
-viewButton n =
-    let
-        valueText =
-            if n > 0 then
-                ("+" ++ (toString n))
-            else
-                toString n
-
-        className =
-            if n > 0 then
-                "plus"
-            else
-                "minus"
-    in
-        button [ onClick (Add n P1), class ("button " ++ className) ]
-            [ span [] [ text valueText ] ]
-
-
-viewButtonCol : String -> String -> Html Msg
-viewButtonCol className direction =
+score : Model -> String -> Html Msg
+score model playerPosition =
     let
         player =
-            if className == "p1" then
+            if playerPosition == "left" then
+                model.p1
+            else
+                model.p2
+    in
+        div [ class "sc-score" ]
+            [ span [ class "sc-read" ] [ text (toString player.authority) ] ]
+
+
+counter : String -> Int -> Html Msg
+counter playerPosition value =
+    let
+        player =
+            if playerPosition == "left" then
                 P1
             else
                 P2
@@ -183,61 +169,45 @@ viewButtonCol className direction =
                 n
             else
                 (n * -1)
-
-        textval : Int -> String -> String
-        textval n direction =
-            if direction == "plus" then
-                "+" ++ (toString n)
-            else
-                toString (n * -1)
     in
-        div [ class ("col " ++ className) ]
-            [ button [ onClick (Add (addval 1 direction) player), class ("button " ++ direction) ]
-                [ span [] [ text (textval 1 direction) ] ]
-            , button [ onClick (Add (addval 3 direction) player), class ("button " ++ direction) ]
-                [ span [] [ text (textval 3 direction) ] ]
-            , button [ onClick (Add (addval 5 direction) player), class ("button " ++ direction) ]
-                [ span [] [ text (textval 5 direction) ] ]
+        div [ class "sc-counter" ]
+            [ button [ onClick (Add (addval value "minus") player) ]
+                [ span [ class "sc-read" ] [ text ("-") ] ]
+            , div [ class "sc-count-value" ]
+                [ span [ class "sc-read" ] [ text (toString value) ] ]
+            , button [ onClick (Add (addval value "plus") player) ]
+                [ span [ class "sc-read" ] [ text ("+") ] ]
             ]
 
 
-viewFullScreenContainer : Model -> Html Msg
-viewFullScreenContainer model =
-    case model.fullscreen of
-        Nothing ->
-            div [ class "fullscreen-confirm" ]
-                [ div []
-                    [ text "We recommend using this page in fullscreen mode."
-                    , br [] []
-                    , text "Do you want to activate fullscreen mode now?"
-                    , br [] []
-                    , button [ onClick (FullscreenMode True) ] [ text "yes" ]
-                    , button [ onClick (FullscreenMode False) ] [ text "no" ]
-                    ]
-                ]
-
-        Just fullscreen ->
-            div [] []
+playerCol : Model -> String -> String -> Html Msg
+playerCol model position className =
+    div [ class ("sc-col " ++ className) ]
+        [ counter position 1
+        , score model position
+        , counter position 5
+        ]
 
 
 view : Model -> Html Msg
 view model =
     div [ class "app" ]
-        [ div [ class "container" ]
-            [ viewButtonCol "p1" "minus"
-            , viewButtonCol "p1" "plus"
-            , div [ class "col middle" ]
-                [ div [ class "authority p1" ]
-                    [ span [] [ text (toString model.p1.authority) ] ]
-                , div [ class "last-actions-container" ]
-                    [ div [ class "last-actions p1" ] [ (concatLastActions model.p1.lastActions) ]
-                    , div [ class "last-actions p2" ] [ (concatLastActions model.p2.lastActions) ]
-                    ]
-                , div [ class "authority p2" ]
-                    [ span [] [ text (toString model.p2.authority) ] ]
+        [ div [ class "sc-container" ]
+            [ playerCol model "left" "sc-p-left"
+            , div [ class "sc-col sc-middle" ]
+                [ a []
+                    [ span [ class "oi", attribute "data-glyph" "info", title "info" ] [] ]
+                , a []
+                    [ span [ class "oi", attribute "data-glyph" "question-mark", title "help" ] [] ]
+                , span
+                    [ class "sc-spacer" ]
+                    []
+                , a []
+                    [ span [ class "oi", attribute "data-glyph" "clock", title "history" ] [] ]
+                , a []
+                    [ span [ class "oi", attribute "data-glyph" "cog", title "settings" ] [] ]
+                , fullScreenButton model
                 ]
-            , viewButtonCol "p2" "plus"
-            , viewButtonCol "p2" "minus"
+            , playerCol model "right" "sc-p-right"
             ]
-        , viewFullScreenContainer model
         ]

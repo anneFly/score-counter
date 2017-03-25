@@ -1564,8 +1564,7 @@ function toString(v)
 	var type = typeof v;
 	if (type === 'function')
 	{
-		var name = v.func ? v.func.name : v.name;
-		return '<function' + (name === '' ? '' : ':') + name + '>';
+		return '<function>';
 	}
 
 	if (type === 'boolean')
@@ -2072,6 +2071,13 @@ var _elm_lang$core$List$sortWith = _elm_lang$core$Native_List.sortWith;
 var _elm_lang$core$List$sortBy = _elm_lang$core$Native_List.sortBy;
 var _elm_lang$core$List$sort = function (xs) {
 	return A2(_elm_lang$core$List$sortBy, _elm_lang$core$Basics$identity, xs);
+};
+var _elm_lang$core$List$singleton = function (value) {
+	return {
+		ctor: '::',
+		_0: value,
+		_1: {ctor: '[]'}
+	};
 };
 var _elm_lang$core$List$drop = F2(
 	function (n, list) {
@@ -3520,15 +3526,8 @@ function setupIncomingPort(name, callback)
 		sentBeforeInit.push(value);
 	}
 
-	function postInitSend(incomingValue)
+	function postInitSend(value)
 	{
-		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, incomingValue);
-		if (result.ctor === 'Err')
-		{
-			throw new Error('Trying to send an unexpected type of value through port `' + name + '`:\n' + result._0);
-		}
-
-		var value = result._0;
 		var temp = subs;
 		while (temp.ctor !== '[]')
 		{
@@ -3539,7 +3538,13 @@ function setupIncomingPort(name, callback)
 
 	function send(incomingValue)
 	{
-		currentSend(incomingValue);
+		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, incomingValue);
+		if (result.ctor === 'Err')
+		{
+			throw new Error('Trying to send an unexpected type of value through port `' + name + '`:\n' + result._0);
+		}
+
+		currentSend(result._0);
 	}
 
 	return { send: send };
@@ -3963,7 +3968,7 @@ function endsWith(sub, str)
 function indexes(sub, str)
 {
 	var subLen = sub.length;
-	
+
 	if (subLen < 1)
 	{
 		return _elm_lang$core$Native_List.Nil;
@@ -3976,74 +3981,78 @@ function indexes(sub, str)
 	{
 		is.push(i);
 		i = i + subLen;
-	}	
-	
+	}
+
 	return _elm_lang$core$Native_List.fromArray(is);
 }
+
 
 function toInt(s)
 {
 	var len = s.length;
+
+	// if empty
 	if (len === 0)
 	{
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+		return intErr(s);
 	}
-	var start = 0;
-	if (s[0] === '-')
+
+	// if hex
+	var c = s[0];
+	if (c === '0' && s[1] === 'x')
 	{
-		if (len === 1)
+		for (var i = 2; i < len; ++i)
 		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+			var c = s[i];
+			if (('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'))
+			{
+				continue;
+			}
+			return intErr(s);
 		}
-		start = 1;
+		return _elm_lang$core$Result$Ok(parseInt(s, 16));
 	}
-	for (var i = start; i < len; ++i)
+
+	// is decimal
+	if (c > '9' || (c < '0' && c !== '-' && c !== '+'))
+	{
+		return intErr(s);
+	}
+	for (var i = 1; i < len; ++i)
 	{
 		var c = s[i];
 		if (c < '0' || '9' < c)
 		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int" );
+			return intErr(s);
 		}
 	}
+
 	return _elm_lang$core$Result$Ok(parseInt(s, 10));
 }
 
+function intErr(s)
+{
+	return _elm_lang$core$Result$Err("could not convert string '" + s + "' to an Int");
+}
+
+
 function toFloat(s)
 {
-	var len = s.length;
-	if (len === 0)
+	// check if it is a hex, octal, or binary number
+	if (s.length === 0 || /[\sxbo]/.test(s))
 	{
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
+		return floatErr(s);
 	}
-	var start = 0;
-	if (s[0] === '-')
-	{
-		if (len === 1)
-		{
-			return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
-		}
-		start = 1;
-	}
-	var dotCount = 0;
-	for (var i = start; i < len; ++i)
-	{
-		var c = s[i];
-		if ('0' <= c && c <= '9')
-		{
-			continue;
-		}
-		if (c === '.')
-		{
-			dotCount += 1;
-			if (dotCount <= 1)
-			{
-				continue;
-			}
-		}
-		return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float" );
-	}
-	return _elm_lang$core$Result$Ok(parseFloat(s));
+	var n = +s;
+	// faster isNaN check
+	return n === n ? _elm_lang$core$Result$Ok(n) : floatErr(s);
 }
+
+function floatErr(s)
+{
+	return _elm_lang$core$Result$Err("could not convert string '" + s + "' to a Float");
+}
+
 
 function toList(str)
 {
@@ -5283,11 +5292,6 @@ function badToString(problem)
 				problem = problem.rest;
 				break;
 
-			case 'index':
-				context += '[' + problem.index + ']';
-				problem = problem.rest;
-				break;
-
 			case 'oneOf':
 				var problems = problem.problems;
 				for (var i = 0; i < problems.length; i++)
@@ -6015,9 +6019,9 @@ function on(name, options, decoder)
 
 function equalEvents(a, b)
 {
-	if (!a.options === b.options)
+	if (a.options !== b.options)
 	{
-		if (a.stopPropagation !== b.stopPropagation || a.preventDefault !== b.preventDefault)
+		if (a.options.stopPropagation !== b.options.stopPropagation || a.options.preventDefault !== b.options.preventDefault)
 		{
 			return false;
 		}
@@ -7293,7 +7297,7 @@ function normalRenderer(parentNode, view)
 var rAF =
 	typeof requestAnimationFrame !== 'undefined'
 		? requestAnimationFrame
-		: function(callback) { callback(); };
+		: function(callback) { setTimeout(callback, 1000 / 60); };
 
 function makeStepper(domNode, view, initialVirtualNode, eventNode)
 {
@@ -8256,56 +8260,50 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$viewLastAction = function (n) {
-	return (_elm_lang$core$Native_Utils.cmp(n, 0) > 0) ? A2(
-		_elm_lang$html$Html$span,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('action plus'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'+',
-					_elm_lang$core$Basics$toString(n))),
-			_1: {ctor: '[]'}
-		}) : A2(
-		_elm_lang$html$Html$span,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('action minus'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(
-				_elm_lang$core$Basics$toString(n)),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$concatLastActions = function (actions) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$Main$viewLastAction, actions));
-};
+var _user$project$Main$score = F2(
+	function (model, playerPosition) {
+		var player = _elm_lang$core$Native_Utils.eq(playerPosition, 'left') ? model.p1 : model.p2;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('sc-score'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(player.authority)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$initPlayer = {
-	authority: 50,
-	lastActions: {ctor: '[]'}
-};
+var _user$project$Main$initPlayer = {authority: 50};
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: _elm_lang$core$Maybe$Nothing},
+	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: false},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$activateFullscreen = _elm_lang$core$Native_Platform.outgoingPort(
 	'activateFullscreen',
+	function (v) {
+		return v;
+	});
+var _user$project$Main$deactivateFullscreen = _elm_lang$core$Native_Platform.outgoingPort(
+	'deactivateFullscreen',
 	function (v) {
 		return v;
 	});
@@ -8314,76 +8312,47 @@ var _user$project$Main$update = F2(
 		var _p0 = msg;
 		if (_p0.ctor === 'Add') {
 			if (_p0._1.ctor === 'P1') {
-				var _p1 = _p0._0;
 				var p2 = model.p2;
-				var player2 = _elm_lang$core$Native_Utils.update(
-					p2,
-					{
-						lastActions: {ctor: '[]'}
-					});
+				var player2 = p2;
 				var p1 = model.p1;
 				var player1 = _elm_lang$core$Native_Utils.update(
 					p1,
-					{
-						authority: p1.authority + _p1,
-						lastActions: A2(
-							_elm_lang$core$List$append,
-							p1.lastActions,
-							{
-								ctor: '::',
-								_0: _p1,
-								_1: {ctor: '[]'}
-							})
-					});
+					{authority: p1.authority + _p0._0});
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
 					{p1: player1, p2: player2});
 				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
 			} else {
-				var _p2 = _p0._0;
 				var p1 = model.p1;
-				var player1 = _elm_lang$core$Native_Utils.update(
-					p1,
-					{
-						lastActions: {ctor: '[]'}
-					});
+				var player1 = p1;
 				var p2 = model.p2;
 				var player2 = _elm_lang$core$Native_Utils.update(
 					p2,
-					{
-						authority: p2.authority + _p2,
-						lastActions: A2(
-							_elm_lang$core$List$append,
-							p2.lastActions,
-							{
-								ctor: '::',
-								_0: _p2,
-								_1: {ctor: '[]'}
-							})
-					});
+					{authority: p2.authority + _p0._0});
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
 					{p2: player2, p1: player1});
 				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
 			}
 		} else {
-			var _p3 = _p0._0;
+			var _p1 = _p0._0;
 			var m = _elm_lang$core$Native_Utils.update(
 				model,
-				{
-					fullscreen: _elm_lang$core$Maybe$Just(_p3)
-				});
-			return _p3 ? {
+				{fullscreen: _p1});
+			return _p1 ? {
 				ctor: '_Tuple2',
 				_0: m,
 				_1: _user$project$Main$activateFullscreen('')
-			} : {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+			} : {
+				ctor: '_Tuple2',
+				_0: m,
+				_1: _user$project$Main$deactivateFullscreen('')
+			};
 		}
 	});
-var _user$project$Main$Player = F2(
-	function (a, b) {
-		return {authority: a, lastActions: b};
-	});
+var _user$project$Main$Player = function (a) {
+	return {authority: a};
+};
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
 		return {p1: a, p2: b, fullscreen: c};
@@ -8393,141 +8362,84 @@ var _user$project$Main$P1 = {ctor: 'P1'};
 var _user$project$Main$FullscreenMode = function (a) {
 	return {ctor: 'FullscreenMode', _0: a};
 };
-var _user$project$Main$viewFullScreenContainer = function (model) {
-	var _p4 = model.fullscreen;
-	if (_p4.ctor === 'Nothing') {
+var _user$project$Main$fullScreenButton = function (model) {
+	var _p2 = model.fullscreen;
+	if (_p2 === false) {
 		return A2(
-			_elm_lang$html$Html$div,
+			_elm_lang$html$Html$a,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('fullscreen-confirm'),
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Main$FullscreenMode(true)),
 				_1: {ctor: '[]'}
 			},
 			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
+					_elm_lang$html$Html$span,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('We recommend using this page in fullscreen mode.'),
+						_0: _elm_lang$html$Html_Attributes$class('oi'),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$br,
-								{ctor: '[]'},
-								{ctor: '[]'}),
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'fullscreen-enter'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Do you want to activate fullscreen mode now?'),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$br,
-										{ctor: '[]'},
-										{ctor: '[]'}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$button,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(
-													_user$project$Main$FullscreenMode(true)),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('yes'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$button,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onClick(
-														_user$project$Main$FullscreenMode(false)),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('no'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
+								_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
+								_1: {ctor: '[]'}
 							}
 						}
-					}),
+					},
+					{ctor: '[]'}),
 				_1: {ctor: '[]'}
 			});
 	} else {
 		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{ctor: '[]'});
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Main$FullscreenMode(false)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'fullscreen-exit'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
 	}
 };
 var _user$project$Main$Add = F2(
 	function (a, b) {
 		return {ctor: 'Add', _0: a, _1: b};
 	});
-var _user$project$Main$viewButton = function (n) {
-	var className = (_elm_lang$core$Native_Utils.cmp(n, 0) > 0) ? 'plus' : 'minus';
-	var valueText = (_elm_lang$core$Native_Utils.cmp(n, 0) > 0) ? A2(
-		_elm_lang$core$Basics_ops['++'],
-		'+',
-		_elm_lang$core$Basics$toString(n)) : _elm_lang$core$Basics$toString(n);
-	return A2(
-		_elm_lang$html$Html$button,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(
-				A2(_user$project$Main$Add, n, _user$project$Main$P1)),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class(
-					A2(_elm_lang$core$Basics_ops['++'], 'button ', className)),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$span,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(valueText),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$viewButtonCol = F2(
-	function (className, direction) {
-		var textval = F2(
-			function (n, direction) {
-				return _elm_lang$core$Native_Utils.eq(direction, 'plus') ? A2(
-					_elm_lang$core$Basics_ops['++'],
-					'+',
-					_elm_lang$core$Basics$toString(n)) : _elm_lang$core$Basics$toString(n * -1);
-			});
+var _user$project$Main$counter = F2(
+	function (playerPosition, value) {
 		var addval = F2(
 			function (n, direction) {
 				return _elm_lang$core$Native_Utils.eq(direction, 'plus') ? n : (n * -1);
 			});
-		var player = _elm_lang$core$Native_Utils.eq(className, 'p1') ? _user$project$Main$P1 : _user$project$Main$P2;
+		var player = _elm_lang$core$Native_Utils.eq(playerPosition, 'left') ? _user$project$Main$P1 : _user$project$Main$P2;
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class(
-					A2(_elm_lang$core$Basics_ops['++'], 'col ', className)),
+				_0: _elm_lang$html$Html_Attributes$class('sc-counter'),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -8539,24 +8451,22 @@ var _user$project$Main$viewButtonCol = F2(
 						_0: _elm_lang$html$Html_Events$onClick(
 							A2(
 								_user$project$Main$Add,
-								A2(addval, 1, direction),
+								A2(addval, value, 'minus'),
 								player)),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class(
-								A2(_elm_lang$core$Basics_ops['++'], 'button ', direction)),
-							_1: {ctor: '[]'}
-						}
+						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$span,
-							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									A2(textval, 1, direction)),
+								_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('-'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -8564,30 +8474,25 @@ var _user$project$Main$viewButtonCol = F2(
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$button,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								A2(
-									_user$project$Main$Add,
-									A2(addval, 3, direction),
-									player)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(_elm_lang$core$Basics_ops['++'], 'button ', direction)),
-								_1: {ctor: '[]'}
-							}
+							_0: _elm_lang$html$Html_Attributes$class('sc-count-value'),
+							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$span,
-								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+									_1: {ctor: '[]'}
+								},
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html$text(
-										A2(textval, 3, direction)),
+										_elm_lang$core$Basics$toString(value)),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -8601,28 +8506,50 @@ var _user$project$Main$viewButtonCol = F2(
 								_0: _elm_lang$html$Html_Events$onClick(
 									A2(
 										_user$project$Main$Add,
-										A2(addval, 5, direction),
+										A2(addval, value, 'plus'),
 										player)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class(
-										A2(_elm_lang$core$Basics_ops['++'], 'button ', direction)),
-									_1: {ctor: '[]'}
-								}
+								_1: {ctor: '[]'}
 							},
 							{
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$span,
-									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(textval, 5, direction)),
+										_0: _elm_lang$html$Html_Attributes$class('sc-read'),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('+'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {ctor: '[]'}
 							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$Main$playerCol = F3(
+	function (model, position, className) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class(
+					A2(_elm_lang$core$Basics_ops['++'], 'sc-col ', className)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(_user$project$Main$counter, position, 1),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Main$score, model, position),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Main$counter, position, 5),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -8642,129 +8569,149 @@ var _user$project$Main$view = function (model) {
 				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('container'),
+					_0: _elm_lang$html$Html_Attributes$class('sc-container'),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: A2(_user$project$Main$viewButtonCol, 'p1', 'minus'),
+					_0: A3(_user$project$Main$playerCol, model, 'left', 'sc-p-left'),
 					_1: {
 						ctor: '::',
-						_0: A2(_user$project$Main$viewButtonCol, 'p1', 'plus'),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('col middle'),
-									_1: {ctor: '[]'}
-								},
-								{
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('sc-col sc-middle'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$a,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$span,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('oi'),
+												_1: {
+													ctor: '::',
+													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'info'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$title('info'),
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{ctor: '[]'}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
 									ctor: '::',
 									_0: A2(
-										_elm_lang$html$Html$div,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('authority p1'),
-											_1: {ctor: '[]'}
-										},
+										_elm_lang$html$Html$a,
+										{ctor: '[]'},
 										{
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$span,
-												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text(
-														_elm_lang$core$Basics$toString(model.p1.authority)),
-													_1: {ctor: '[]'}
-												}),
+													_0: _elm_lang$html$Html_Attributes$class('oi'),
+													_1: {
+														ctor: '::',
+														_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'question-mark'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$title('help'),
+															_1: {ctor: '[]'}
+														}
+													}
+												},
+												{ctor: '[]'}),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
-											_elm_lang$html$Html$div,
+											_elm_lang$html$Html$span,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('last-actions-container'),
+												_0: _elm_lang$html$Html_Attributes$class('sc-spacer'),
 												_1: {ctor: '[]'}
 											},
-											{
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$div,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$class('last-actions p1'),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _user$project$Main$concatLastActions(model.p1.lastActions),
-														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('last-actions p2'),
-															_1: {ctor: '[]'}
-														},
-														{
-															ctor: '::',
-															_0: _user$project$Main$concatLastActions(model.p2.lastActions),
-															_1: {ctor: '[]'}
-														}),
-													_1: {ctor: '[]'}
-												}
-											}),
+											{ctor: '[]'}),
 										_1: {
 											ctor: '::',
 											_0: A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$class('authority p2'),
-													_1: {ctor: '[]'}
-												},
+												_elm_lang$html$Html$a,
+												{ctor: '[]'},
 												{
 													ctor: '::',
 													_0: A2(
 														_elm_lang$html$Html$span,
-														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text(
-																_elm_lang$core$Basics$toString(model.p2.authority)),
-															_1: {ctor: '[]'}
-														}),
+															_0: _elm_lang$html$Html_Attributes$class('oi'),
+															_1: {
+																ctor: '::',
+																_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'clock'),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$title('history'),
+																	_1: {ctor: '[]'}
+																}
+															}
+														},
+														{ctor: '[]'}),
 													_1: {ctor: '[]'}
 												}),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$a,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$span,
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$class('oi'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'cog'),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$title('settings'),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															},
+															{ctor: '[]'}),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: _user$project$Main$fullScreenButton(model),
+													_1: {ctor: '[]'}
+												}
+											}
 										}
 									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(_user$project$Main$viewButtonCol, 'p2', 'plus'),
-								_1: {
-									ctor: '::',
-									_0: A2(_user$project$Main$viewButtonCol, 'p2', 'minus'),
-									_1: {ctor: '[]'}
 								}
-							}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Main$playerCol, model, 'right', 'sc-p-right'),
+							_1: {ctor: '[]'}
 						}
 					}
 				}),
-			_1: {
-				ctor: '::',
-				_0: _user$project$Main$viewFullScreenContainer(model),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Main$main = _elm_lang$html$Html$program(
