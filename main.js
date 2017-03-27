@@ -8260,9 +8260,9 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$lastAction = function (value) {
-	return A2(
-		_elm_lang$html$Html$div,
+var _user$project$Main$lastChange = function (value) {
+	return (!_elm_lang$core$Native_Utils.eq(value, 0)) ? A2(
+		_elm_lang$html$Html$span,
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html_Attributes$class('sc-read'),
@@ -8273,7 +8273,10 @@ var _user$project$Main$lastAction = function (value) {
 			_0: _elm_lang$html$Html$text(
 				_elm_lang$core$Basics$toString(value)),
 			_1: {ctor: '[]'}
-		});
+		}) : A2(
+		_elm_lang$html$Html$span,
+		{ctor: '[]'},
+		{ctor: '[]'});
 };
 var _user$project$Main$score = F2(
 	function (model, playerPosition) {
@@ -8306,7 +8309,7 @@ var _user$project$Main$score = F2(
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(player.authority)),
+									_elm_lang$core$Basics$toString(player.score)),
 								_1: {ctor: '[]'}
 							}),
 						_1: {ctor: '[]'}
@@ -8317,10 +8320,14 @@ var _user$project$Main$score = F2(
 						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('sc-last-actions'),
+							_0: _elm_lang$html$Html_Attributes$class('sc-last-change'),
 							_1: {ctor: '[]'}
 						},
-						A2(_elm_lang$core$List$map, _user$project$Main$lastAction, player.lastActions)),
+						{
+							ctor: '::',
+							_0: _user$project$Main$lastChange(player.lastChange),
+							_1: {ctor: '[]'}
+						}),
 					_1: {ctor: '[]'}
 				}
 			});
@@ -8328,10 +8335,7 @@ var _user$project$Main$score = F2(
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
-var _user$project$Main$initPlayer = {
-	authority: 50,
-	lastActions: {ctor: '[]'}
-};
+var _user$project$Main$initPlayer = {score: 20, lastChange: 0};
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
 	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: false},
@@ -8361,16 +8365,11 @@ var _user$project$Main$update = F2(
 				var p2 = model.p2;
 				var player2 = _elm_lang$core$Native_Utils.update(
 					p2,
-					{
-						lastActions: {ctor: '[]'}
-					});
+					{lastChange: 0});
 				var p1 = model.p1;
 				var player1 = _elm_lang$core$Native_Utils.update(
 					p1,
-					{
-						authority: p1.authority + _p1,
-						lastActions: {ctor: '::', _0: _p1, _1: p1.lastActions}
-					});
+					{score: p1.score + _p1, lastChange: p1.lastChange + _p1});
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
 					{p1: player1, p2: player2});
@@ -8384,16 +8383,11 @@ var _user$project$Main$update = F2(
 				var p1 = model.p1;
 				var player1 = _elm_lang$core$Native_Utils.update(
 					p1,
-					{
-						lastActions: {ctor: '[]'}
-					});
+					{lastChange: 0});
 				var p2 = model.p2;
 				var player2 = _elm_lang$core$Native_Utils.update(
 					p2,
-					{
-						authority: p2.authority + _p2,
-						lastActions: {ctor: '::', _0: _p2, _1: p2.lastActions}
-					});
+					{score: p2.score + _p2, lastChange: p2.lastChange + _p2});
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
 					{p2: player2, p1: player1});
@@ -8421,7 +8415,7 @@ var _user$project$Main$update = F2(
 	});
 var _user$project$Main$Player = F2(
 	function (a, b) {
-		return {authority: a, lastActions: b};
+		return {score: a, lastChange: b};
 	});
 var _user$project$Main$Model = F3(
 	function (a, b, c) {

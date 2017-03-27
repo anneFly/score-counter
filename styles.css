@@ -72,18 +72,15 @@ html, body {
   font-size: 3em;
   font-weight: bold;
   color: #ffff00;
+  flex-basis: 30%;
+  text-align: left;
 }
-.sc-last-actions {
-  flex-grow: 1;
-  display: flex;
+.sc-p-left .sc-score {
+  text-align: right;
 }
-.sc-p-left .sc-last-actions {
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-}
-.sc-last-actions div {
+.sc-last-change {
+  flex-basis: 10%;
   text-align: center;
-  flex-basis: 2em;
 }
 .sc-count-value {
   z-index: 10;

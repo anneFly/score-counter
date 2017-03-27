@@ -14,15 +14,15 @@ main =
 
 
 type alias Player =
-    { authority : Int
-    , lastActions : List Int
+    { score : Int
+    , lastChange : Int
     }
 
 
 initPlayer : Player
 initPlayer =
-    { authority = 50
-    , lastActions = []
+    { score = 20
+    , lastChange = 0
     }
 
 
@@ -88,12 +88,12 @@ update msg model =
 
                 player1 =
                     { p1
-                        | authority = p1.authority + val
-                        , lastActions = val :: p1.lastActions
+                        | score = p1.score + val
+                        , lastChange = p1.lastChange + val
                     }
 
                 player2 =
-                    { p2 | lastActions = [] }
+                    { p2 | lastChange = 0 }
 
                 m =
                     { model
@@ -113,12 +113,12 @@ update msg model =
 
                 player2 =
                     { p2
-                        | authority = p2.authority + val
-                        , lastActions = val :: p2.lastActions
+                        | score = p2.score + val
+                        , lastChange = p2.lastChange + val
                     }
 
                 player1 =
-                    { p1 | lastActions = [] }
+                    { p1 | lastChange = 0 }
 
                 m =
                     { model | p2 = player2, p1 = player1 }
@@ -152,9 +152,12 @@ fullScreenButton model =
                 [ span [ class "oi", attribute "data-glyph" "fullscreen-exit", title "fullscreen" ] [] ]
 
 
-lastAction : Int -> Html Msg
-lastAction value =
-    div [ class "sc-read" ] [ text (toString value) ]
+lastChange : Int -> Html Msg
+lastChange value =
+    if value /= 0 then
+        span [ class "sc-read" ] [ text (toString value) ]
+    else
+        span [] []
 
 
 score : Model -> String -> Html Msg
@@ -168,8 +171,8 @@ score model playerPosition =
     in
         div [ class "sc-scores" ]
             [ div [ class "sc-score" ]
-                [ span [ class "sc-read" ] [ text (toString player.authority) ] ]
-            , div [ class "sc-last-actions" ] (List.map lastAction player.lastActions)
+                [ span [ class "sc-read" ] [ text (toString player.score) ] ]
+            , div [ class "sc-last-change" ] [ lastChange player.lastChange ]
             ]
 
 
