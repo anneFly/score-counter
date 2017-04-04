@@ -1,8 +1,8 @@
 port module Main exposing (..)
 
-import Html exposing (Html, button, div, text, span, br, a)
-import Html.Events exposing (onClick)
-import Html.Attributes exposing (class, title, attribute)
+import Html exposing (Html, button, div, text, span, br, a, input, label)
+import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (class, title, attribute, href, value, type_)
 
 
 main =
@@ -30,6 +30,8 @@ type alias Model =
     { p1 : Player
     , p2 : Player
     , fullscreen : Bool
+    , sound : Bool
+    , settingsView : Bool
     }
 
 
@@ -38,6 +40,8 @@ init =
     ( { p1 = initPlayer
       , p2 = initPlayer
       , fullscreen = False
+      , sound = True
+      , settingsView = False
       }
     , Cmd.none
     )
@@ -73,6 +77,10 @@ type PlayerType
 type Msg
     = Add Int PlayerType
     | FullscreenMode Bool
+    | SetSound Bool
+    | SettingsView Bool
+    | SetScoreP1 String
+    | SetScoreP2 String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -100,8 +108,14 @@ update msg model =
                         | p1 = player1
                         , p2 = player2
                     }
+
+                sound =
+                    if model.sound then
+                        "on"
+                    else
+                        "off"
             in
-                ( m, playSound "" )
+                ( m, playSound sound )
 
         Add val P2 ->
             let
@@ -122,8 +136,14 @@ update msg model =
 
                 m =
                     { model | p2 = player2, p1 = player1 }
+
+                sound =
+                    if model.sound then
+                        "on"
+                    else
+                        "off"
             in
-                ( m, playSound "" )
+                ( m, playSound sound )
 
         FullscreenMode on ->
             let
@@ -134,6 +154,62 @@ update msg model =
                     ( m, activateFullscreen "" )
                 else
                     ( m, deactivateFullscreen "" )
+
+        SettingsView on ->
+            let
+                m =
+                    { model | settingsView = on }
+            in
+                ( m, Cmd.none )
+
+        SetSound on ->
+            let
+                m =
+                    { model | sound = on }
+            in
+                ( m, Cmd.none )
+
+        SetScoreP1 val ->
+            let
+                intVal =
+                    case String.toInt val of
+                        Err msg ->
+                            0
+
+                        Ok val ->
+                            val
+
+                p1 =
+                    model.p1
+
+                player1 =
+                    { p1 | score = intVal }
+
+                m =
+                    { model | p1 = player1 }
+            in
+                ( m, Cmd.none )
+
+        SetScoreP2 val ->
+            let
+                intVal =
+                    case String.toInt val of
+                        Err msg ->
+                            0
+
+                        Ok val ->
+                            val
+
+                p2 =
+                    model.p2
+
+                player2 =
+                    { p2 | score = intVal }
+
+                m =
+                    { model | p2 = player2 }
+            in
+                ( m, Cmd.none )
 
 
 
@@ -150,6 +226,24 @@ fullScreenButton model =
         True ->
             a [ onClick (FullscreenMode False) ]
                 [ span [ class "oi", attribute "data-glyph" "fullscreen-exit", title "fullscreen" ] [] ]
+
+
+soundButton : Model -> Html Msg
+soundButton model =
+    case model.sound of
+        False ->
+            a [ onClick (SetSound True) ]
+                [ span [ class "oi", attribute "data-glyph" "volume-high", title "sound" ] [] ]
+
+        True ->
+            a [ onClick (SetSound False) ]
+                [ span [ class "oi", attribute "data-glyph" "volume-low", title "sound" ] [] ]
+
+
+settingsButton : Model -> Html Msg
+settingsButton model =
+    a [ onClick (SettingsView True) ]
+        [ span [ class "oi", attribute "data-glyph" "cog", title "settings" ] [] ]
 
 
 lastChange : Int -> Html Msg
@@ -193,11 +287,11 @@ counter playerPosition value =
                 (n * -1)
     in
         div [ class "sc-counter" ]
-            [ button [ onClick (Add (addval value "minus") player) ]
+            [ button [ class "sc-btn", onClick (Add (addval value "minus") player) ]
                 [ span [ class "sc-read" ] [ text ("-") ] ]
             , div [ class "sc-count-value" ]
                 [ span [ class "sc-read" ] [ text (toString value) ] ]
-            , button [ onClick (Add (addval value "plus") player) ]
+            , button [ class "sc-btn", onClick (Add (addval value "plus") player) ]
                 [ span [ class "sc-read" ] [ text ("+") ] ]
             ]
 
@@ -211,25 +305,47 @@ playerCol model position className =
         ]
 
 
-view : Model -> Html Msg
-view model =
-    div [ class "app" ]
-        [ div [ class "sc-container" ]
-            [ playerCol model "left" "sc-p-left"
-            , div [ class "sc-col sc-middle" ]
-                [ a []
-                    [ span [ class "oi", attribute "data-glyph" "info", title "info" ] [] ]
-                , a []
-                    [ span [ class "oi", attribute "data-glyph" "question-mark", title "help" ] [] ]
-                , span
-                    [ class "sc-spacer" ]
-                    []
-                , a []
-                    [ span [ class "oi", attribute "data-glyph" "clock", title "history" ] [] ]
-                , a []
-                    [ span [ class "oi", attribute "data-glyph" "cog", title "settings" ] [] ]
-                , fullScreenButton model
-                ]
-            , playerCol model "right" "sc-p-right"
+mainView : Model -> Html Msg
+mainView model =
+    div [ class "sc-container" ]
+        [ playerCol model "left" "sc-p-left"
+        , div [ class "sc-col sc-middle" ]
+            [ a [ href "" ]
+                [ span [ class "oi", attribute "data-glyph" "info", title "info" ] [] ]
+            , a [ href "" ]
+                [ span [ class "oi", attribute "data-glyph" "question-mark", title "help" ] [] ]
+            , span
+                [ class "sc-spacer" ]
+                []
+            , soundButton model
+            , settingsButton model
+            , fullScreenButton model
+            ]
+        , playerCol model "right" "sc-p-right"
+        ]
+
+
+settingsView : Model -> Html Msg
+settingsView model =
+    div [ class "sc-settings-container" ]
+        [ span [ class "sc-close-view", onClick (SettingsView False) ]
+            [ span [ class "oi", attribute "data-glyph" "x", title "close" ] []
+            , text "close"
+            ]
+        , div []
+            [ label [] [ text "player 1 starting score" ]
+            , input [ type_ "number", onInput (SetScoreP1) ] []
+            ]
+        , div []
+            [ label [] [ text "player 2 starting score" ]
+            , input [ type_ "number", onInput (SetScoreP2) ] []
             ]
         ]
+
+
+view : Model -> Html Msg
+view model =
+    if model.settingsView == True then
+        div [ class "app" ] [ settingsView model ]
+    else
+        div [ class "app" ] [ mainView model ]

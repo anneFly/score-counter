@@ -8338,7 +8338,7 @@ var _user$project$Main$subscriptions = function (model) {
 var _user$project$Main$initPlayer = {score: 20, lastChange: 0};
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: false},
+	_0: {p1: _user$project$Main$initPlayer, p2: _user$project$Main$initPlayer, fullscreen: false, sound: true, settingsView: false},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Main$activateFullscreen = _elm_lang$core$Native_Platform.outgoingPort(
@@ -8359,76 +8359,342 @@ var _user$project$Main$playSound = _elm_lang$core$Native_Platform.outgoingPort(
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Add') {
-			if (_p0._1.ctor === 'P1') {
-				var _p1 = _p0._0;
-				var p2 = model.p2;
-				var player2 = _elm_lang$core$Native_Utils.update(
-					p2,
-					{lastChange: 0});
-				var p1 = model.p1;
-				var player1 = _elm_lang$core$Native_Utils.update(
-					p1,
-					{score: p1.score + _p1, lastChange: p1.lastChange + _p1});
+		switch (_p0.ctor) {
+			case 'Add':
+				if (_p0._1.ctor === 'P1') {
+					var _p1 = _p0._0;
+					var sound = model.sound ? 'on' : 'off';
+					var p2 = model.p2;
+					var player2 = _elm_lang$core$Native_Utils.update(
+						p2,
+						{lastChange: 0});
+					var p1 = model.p1;
+					var player1 = _elm_lang$core$Native_Utils.update(
+						p1,
+						{score: p1.score + _p1, lastChange: p1.lastChange + _p1});
+					var m = _elm_lang$core$Native_Utils.update(
+						model,
+						{p1: player1, p2: player2});
+					return {
+						ctor: '_Tuple2',
+						_0: m,
+						_1: _user$project$Main$playSound(sound)
+					};
+				} else {
+					var _p2 = _p0._0;
+					var sound = model.sound ? 'on' : 'off';
+					var p1 = model.p1;
+					var player1 = _elm_lang$core$Native_Utils.update(
+						p1,
+						{lastChange: 0});
+					var p2 = model.p2;
+					var player2 = _elm_lang$core$Native_Utils.update(
+						p2,
+						{score: p2.score + _p2, lastChange: p2.lastChange + _p2});
+					var m = _elm_lang$core$Native_Utils.update(
+						model,
+						{p2: player2, p1: player1});
+					return {
+						ctor: '_Tuple2',
+						_0: m,
+						_1: _user$project$Main$playSound(sound)
+					};
+				}
+			case 'FullscreenMode':
+				var _p3 = _p0._0;
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
-					{p1: player1, p2: player2});
-				return {
+					{fullscreen: _p3});
+				return _p3 ? {
 					ctor: '_Tuple2',
 					_0: m,
-					_1: _user$project$Main$playSound('')
+					_1: _user$project$Main$activateFullscreen('')
+				} : {
+					ctor: '_Tuple2',
+					_0: m,
+					_1: _user$project$Main$deactivateFullscreen('')
 				};
-			} else {
-				var _p2 = _p0._0;
-				var p1 = model.p1;
-				var player1 = _elm_lang$core$Native_Utils.update(
-					p1,
-					{lastChange: 0});
-				var p2 = model.p2;
-				var player2 = _elm_lang$core$Native_Utils.update(
-					p2,
-					{score: p2.score + _p2, lastChange: p2.lastChange + _p2});
+			case 'SettingsView':
 				var m = _elm_lang$core$Native_Utils.update(
 					model,
-					{p2: player2, p1: player1});
-				return {
-					ctor: '_Tuple2',
-					_0: m,
-					_1: _user$project$Main$playSound('')
-				};
-			}
-		} else {
-			var _p3 = _p0._0;
-			var m = _elm_lang$core$Native_Utils.update(
-				model,
-				{fullscreen: _p3});
-			return _p3 ? {
-				ctor: '_Tuple2',
-				_0: m,
-				_1: _user$project$Main$activateFullscreen('')
-			} : {
-				ctor: '_Tuple2',
-				_0: m,
-				_1: _user$project$Main$deactivateFullscreen('')
-			};
+					{settingsView: _p0._0});
+				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'SetSound':
+				var m = _elm_lang$core$Native_Utils.update(
+					model,
+					{sound: _p0._0});
+				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'SetScoreP1':
+				var p1 = model.p1;
+				var intVal = function () {
+					var _p4 = _elm_lang$core$String$toInt(_p0._0);
+					if (_p4.ctor === 'Err') {
+						return 0;
+					} else {
+						return _p4._0;
+					}
+				}();
+				var player1 = _elm_lang$core$Native_Utils.update(
+					p1,
+					{score: intVal});
+				var m = _elm_lang$core$Native_Utils.update(
+					model,
+					{p1: player1});
+				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				var p2 = model.p2;
+				var intVal = function () {
+					var _p5 = _elm_lang$core$String$toInt(_p0._0);
+					if (_p5.ctor === 'Err') {
+						return 0;
+					} else {
+						return _p5._0;
+					}
+				}();
+				var player2 = _elm_lang$core$Native_Utils.update(
+					p2,
+					{score: intVal});
+				var m = _elm_lang$core$Native_Utils.update(
+					model,
+					{p2: player2});
+				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Main$Player = F2(
 	function (a, b) {
 		return {score: a, lastChange: b};
 	});
-var _user$project$Main$Model = F3(
-	function (a, b, c) {
-		return {p1: a, p2: b, fullscreen: c};
+var _user$project$Main$Model = F5(
+	function (a, b, c, d, e) {
+		return {p1: a, p2: b, fullscreen: c, sound: d, settingsView: e};
 	});
 var _user$project$Main$P2 = {ctor: 'P2'};
 var _user$project$Main$P1 = {ctor: 'P1'};
+var _user$project$Main$SetScoreP2 = function (a) {
+	return {ctor: 'SetScoreP2', _0: a};
+};
+var _user$project$Main$SetScoreP1 = function (a) {
+	return {ctor: 'SetScoreP1', _0: a};
+};
+var _user$project$Main$SettingsView = function (a) {
+	return {ctor: 'SettingsView', _0: a};
+};
+var _user$project$Main$settingsButton = function (model) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Events$onClick(
+				_user$project$Main$SettingsView(true)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('oi'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'cog'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$title('settings'),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Main$settingsView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('sc-settings-container'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('sc-close-view'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_user$project$Main$SettingsView(false)),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('oi'),
+							_1: {
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'x'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$title('close'),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('close'),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$label,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('player 1 starting score'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('number'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP1),
+										_1: {ctor: '[]'}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$label,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('player 2 starting score'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$input,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$type_('number'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP2),
+											_1: {ctor: '[]'}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$Main$SetSound = function (a) {
+	return {ctor: 'SetSound', _0: a};
+};
+var _user$project$Main$soundButton = function (model) {
+	var _p6 = model.sound;
+	if (_p6 === false) {
+		return A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Main$SetSound(true)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-high'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$title('sound'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Main$SetSound(false)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-low'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$title('sound'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
+	}
+};
 var _user$project$Main$FullscreenMode = function (a) {
 	return {ctor: 'FullscreenMode', _0: a};
 };
 var _user$project$Main$fullScreenButton = function (model) {
-	var _p4 = model.fullscreen;
-	if (_p4 === false) {
+	var _p7 = model.fullscreen;
+	if (_p7 === false) {
 		return A2(
 			_elm_lang$html$Html$a,
 			{
@@ -8512,12 +8778,16 @@ var _user$project$Main$counter = F2(
 					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(
-							A2(
-								_user$project$Main$Add,
-								A2(addval, value, 'minus'),
-								player)),
-						_1: {ctor: '[]'}
+						_0: _elm_lang$html$Html_Attributes$class('sc-btn'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								A2(
+									_user$project$Main$Add,
+									A2(addval, value, 'minus'),
+									player)),
+							_1: {ctor: '[]'}
+						}
 					},
 					{
 						ctor: '::',
@@ -8567,12 +8837,16 @@ var _user$project$Main$counter = F2(
 							_elm_lang$html$Html$button,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									A2(
-										_user$project$Main$Add,
-										A2(addval, value, 'plus'),
-										player)),
-								_1: {ctor: '[]'}
+								_0: _elm_lang$html$Html_Attributes$class('sc-btn'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										A2(
+											_user$project$Main$Add,
+											A2(addval, value, 'plus'),
+											player)),
+									_1: {ctor: '[]'}
+								}
 							},
 							{
 								ctor: '::',
@@ -8619,8 +8893,120 @@ var _user$project$Main$playerCol = F3(
 				}
 			});
 	});
-var _user$project$Main$view = function (model) {
+var _user$project$Main$mainView = function (model) {
 	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('sc-container'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A3(_user$project$Main$playerCol, model, 'left', 'sc-p-left'),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('sc-col sc-middle'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href(''),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('oi'),
+										_1: {
+											ctor: '::',
+											_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'info'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$title('info'),
+												_1: {ctor: '[]'}
+											}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$a,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$href(''),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$span,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('oi'),
+											_1: {
+												ctor: '::',
+												_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'question-mark'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$title('help'),
+													_1: {ctor: '[]'}
+												}
+											}
+										},
+										{ctor: '[]'}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('sc-spacer'),
+										_1: {ctor: '[]'}
+									},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$soundButton(model),
+									_1: {
+										ctor: '::',
+										_0: _user$project$Main$settingsButton(model),
+										_1: {
+											ctor: '::',
+											_0: _user$project$Main$fullScreenButton(model),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A3(_user$project$Main$playerCol, model, 'right', 'sc-p-right'),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$Main$view = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.settingsView, true) ? A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
@@ -8629,152 +9015,18 @@ var _user$project$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('sc-container'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A3(_user$project$Main$playerCol, model, 'left', 'sc-p-left'),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('sc-col sc-middle'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$a,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$span,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('oi'),
-												_1: {
-													ctor: '::',
-													_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'info'),
-													_1: {
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$title('info'),
-														_1: {ctor: '[]'}
-													}
-												}
-											},
-											{ctor: '[]'}),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$a,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$span,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$class('oi'),
-													_1: {
-														ctor: '::',
-														_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'question-mark'),
-														_1: {
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$title('help'),
-															_1: {ctor: '[]'}
-														}
-													}
-												},
-												{ctor: '[]'}),
-											_1: {ctor: '[]'}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$span,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('sc-spacer'),
-												_1: {ctor: '[]'}
-											},
-											{ctor: '[]'}),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$a,
-												{ctor: '[]'},
-												{
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$span,
-														{
-															ctor: '::',
-															_0: _elm_lang$html$Html_Attributes$class('oi'),
-															_1: {
-																ctor: '::',
-																_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'clock'),
-																_1: {
-																	ctor: '::',
-																	_0: _elm_lang$html$Html_Attributes$title('history'),
-																	_1: {ctor: '[]'}
-																}
-															}
-														},
-														{ctor: '[]'}),
-													_1: {ctor: '[]'}
-												}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$a,
-													{ctor: '[]'},
-													{
-														ctor: '::',
-														_0: A2(
-															_elm_lang$html$Html$span,
-															{
-																ctor: '::',
-																_0: _elm_lang$html$Html_Attributes$class('oi'),
-																_1: {
-																	ctor: '::',
-																	_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'cog'),
-																	_1: {
-																		ctor: '::',
-																		_0: _elm_lang$html$Html_Attributes$title('settings'),
-																		_1: {ctor: '[]'}
-																	}
-																}
-															},
-															{ctor: '[]'}),
-														_1: {ctor: '[]'}
-													}),
-												_1: {
-													ctor: '::',
-													_0: _user$project$Main$fullScreenButton(model),
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Main$playerCol, model, 'right', 'sc-p-right'),
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
+			_0: _user$project$Main$settingsView(model),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('app'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$Main$mainView(model),
 			_1: {ctor: '[]'}
 		});
 };

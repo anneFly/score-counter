@@ -38,8 +38,10 @@
               document.msExitFullscreen();
             }
           });
-          app.ports.playSound.subscribe( function () {
-            audio.play();
+          app.ports.playSound.subscribe( function (sound) {
+            if (sound === 'on') {
+              audio.play();
+            }
           });
         };
       }());
