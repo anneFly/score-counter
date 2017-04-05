@@ -8915,62 +8915,10 @@ var _user$project$Main$mainView = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$a,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$href(''),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$span,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('oi'),
-										_1: {
-											ctor: '::',
-											_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'info'),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$title('info'),
-												_1: {ctor: '[]'}
-											}
-										}
-									},
-									{ctor: '[]'}),
-								_1: {ctor: '[]'}
-							}),
+						_0: _user$project$Main$soundButton(model),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$a,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$href(''),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$span,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('oi'),
-											_1: {
-												ctor: '::',
-												_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'question-mark'),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$title('help'),
-													_1: {ctor: '[]'}
-												}
-											}
-										},
-										{ctor: '[]'}),
-									_1: {ctor: '[]'}
-								}),
+							_0: _user$project$Main$settingsButton(model),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -8983,16 +8931,8 @@ var _user$project$Main$mainView = function (model) {
 									{ctor: '[]'}),
 								_1: {
 									ctor: '::',
-									_0: _user$project$Main$soundButton(model),
-									_1: {
-										ctor: '::',
-										_0: _user$project$Main$settingsButton(model),
-										_1: {
-											ctor: '::',
-											_0: _user$project$Main$fullScreenButton(model),
-											_1: {ctor: '[]'}
-										}
-									}
+									_0: _user$project$Main$fullScreenButton(model),
+									_1: {ctor: '[]'}
 								}
 							}
 						}

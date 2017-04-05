@@ -310,15 +310,11 @@ mainView model =
     div [ class "sc-container" ]
         [ playerCol model "left" "sc-p-left"
         , div [ class "sc-col sc-middle" ]
-            [ a [ href "" ]
-                [ span [ class "oi", attribute "data-glyph" "info", title "info" ] [] ]
-            , a [ href "" ]
-                [ span [ class "oi", attribute "data-glyph" "question-mark", title "help" ] [] ]
+            [ soundButton model
+            , settingsButton model
             , span
                 [ class "sc-spacer" ]
                 []
-            , soundButton model
-            , settingsButton model
             , fullScreenButton model
             ]
         , playerCol model "right" "sc-p-right"
