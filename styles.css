@@ -7,6 +7,7 @@ html, body {
   background: #111;
   color: #f7f7f7;
   font-family: "Electrolize", arial, sans-serif;
+  font-size: 14px;
 }
 .app {
   width: 100%;
@@ -42,9 +43,9 @@ html, body {
 .sc-middle a span {
   display: inline-block;
   text-align: center;
-  width: 2em;
-  padding: 0.5em 0;
-  font-size: 1em;
+  width: 2rem;
+  padding: 0.5rem 0;
+  font-size: 1rem;
   border-radius: 100%;
   background: #ddd;
   color: #111;
@@ -69,7 +70,7 @@ html, body {
   flex-direction: row-reverse;
 }
 .sc-score {
-  font-size: 3em;
+  font-size: 3rem;
   font-weight: bold;
   color: #ffff00;
   flex-basis: 30%;
@@ -94,7 +95,7 @@ html, body {
   justify-content: center;
   border-radius: 40%;
   background: #111;
-  font-size: 3em;
+  font-size: 3rem;
 }
 .sc-read {
   display: inline-block;
@@ -111,7 +112,7 @@ html, body {
   bottom: 0;
   width: 45%;
   border: 0;
-  font-size: 3em;
+  font-size: 3rem;
   background: #6161b9;
   color: #111;
 }
@@ -150,17 +151,29 @@ button:focus {
 .sc-settings-container {
   position: relative;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
 }
 .sc-close-view {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 1em;
+  padding: 1rem;
+  font-size: 1.5rem;
+}
+.sc-settings-container form {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  font-size: 2rem;
+}
+.sc-settings-container .sc-set-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .sc-settings-container input {
-  width: 3em;
-  margin: 0 0 0 1em;
+  line-height: 2.2rem;
+  font-size: 2rem;
+  width: 8rem;
 }

@@ -8441,7 +8441,7 @@ var _user$project$Main$update = F2(
 					model,
 					{p1: player1});
 				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
+			case 'SetScoreP2':
 				var p2 = model.p2;
 				var intVal = function () {
 					var _p5 = _elm_lang$core$String$toInt(_p0._0);
@@ -8458,6 +8458,8 @@ var _user$project$Main$update = F2(
 					model,
 					{p2: player2});
 				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Main$Player = F2(
@@ -8470,6 +8472,12 @@ var _user$project$Main$Model = F5(
 	});
 var _user$project$Main$P2 = {ctor: 'P2'};
 var _user$project$Main$P1 = {ctor: 'P1'};
+var _user$project$Main$Noop = {ctor: 'Noop'};
+var _user$project$Main$onDummySubmit = A3(
+	_elm_lang$html$Html_Events$onWithOptions,
+	'submit',
+	{stopPropagation: true, preventDefault: true},
+	_elm_lang$core$Json_Decode$succeed(_user$project$Main$Noop));
 var _user$project$Main$SetScoreP2 = function (a) {
 	return {ctor: 'SetScoreP2', _0: a};
 };
@@ -8551,73 +8559,128 @@ var _user$project$Main$settingsView = function (model) {
 						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('close'),
+						_0: _elm_lang$html$Html$text(' close'),
 						_1: {ctor: '[]'}
 					}
 				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
+					_elm_lang$html$Html$form,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$action('#'),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Main$onDummySubmit,
+							_1: {ctor: '[]'}
+						}
+					},
 					{
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$label,
-							{ctor: '[]'},
+							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('player 1 starting score'),
+								_0: _elm_lang$html$Html_Attributes$class('sc-set-score'),
 								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$label,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('player 1 starting score'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$input,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$type_('number'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP1),
+												_1: {ctor: '[]'}
+											}
+										},
+										{ctor: '[]'}),
+									_1: {ctor: '[]'}
+								}
 							}),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$input,
+								_elm_lang$html$Html$div,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$type_('number'),
+									_0: _elm_lang$html$Html_Attributes$class('sc-set-score'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$label,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('player 2 starting score'),
+											_1: {ctor: '[]'}
+										}),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP1),
+										_0: A2(
+											_elm_lang$html$Html$input,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$type_('number'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP2),
+													_1: {ctor: '[]'}
+												}
+											},
+											{ctor: '[]'}),
 										_1: {ctor: '[]'}
 									}
-								},
-								{ctor: '[]'}),
+								}),
 							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
+						_elm_lang$html$Html$button,
 						{
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$label,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('player 2 starting score'),
-									_1: {ctor: '[]'}
-								}),
+							_0: _elm_lang$html$Html_Attributes$type_('submit'),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$input,
+								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$type_('number'),
+										_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$SetScoreP2),
-											_1: {ctor: '[]'}
+											_0: {ctor: '_Tuple2', _0: 'left', _1: '-99999px'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'top', _1: '0'},
+												_1: {ctor: '[]'}
+											}
 										}
-									},
-									{ctor: '[]'}),
+									}),
 								_1: {ctor: '[]'}
 							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(''),
+							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}

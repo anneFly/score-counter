@@ -1,8 +1,9 @@
 port module Main exposing (..)
 
-import Html exposing (Html, button, div, text, span, br, a, input, label)
-import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (class, title, attribute, href, value, type_)
+import Html exposing (Html, button, div, text, span, br, a, input, label, form)
+import Html.Events exposing (onClick, onInput, onWithOptions)
+import Html.Attributes exposing (class, title, attribute, href, value, type_, action, style)
+import Json.Decode as Json
 
 
 main =
@@ -81,6 +82,7 @@ type Msg
     | SettingsView Bool
     | SetScoreP1 String
     | SetScoreP2 String
+    | Noop
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -211,6 +213,9 @@ update msg model =
             in
                 ( m, Cmd.none )
 
+        Noop ->
+            ( model, Cmd.none )
+
 
 
 -- views
@@ -321,21 +326,29 @@ mainView model =
         ]
 
 
+onDummySubmit : Html.Attribute Msg
+onDummySubmit =
+    onWithOptions "submit" { stopPropagation = True, preventDefault = True } (Json.succeed Noop)
+
+
 settingsView : Model -> Html Msg
 settingsView model =
     div [ class "sc-settings-container" ]
         [ span [ class "sc-close-view", onClick (SettingsView False) ]
             [ span [ class "oi", attribute "data-glyph" "x", title "close" ] []
-            , text "close"
+            , text " close"
             ]
-        , div []
-            [ label [] [ text "player 1 starting score" ]
-            , input [ type_ "number", onInput (SetScoreP1) ] []
+        , form [ action "#", onDummySubmit ]
+            [ div [ class "sc-set-score" ]
+                [ label [] [ text "player 1 starting score" ]
+                , input [ type_ "number", onInput (SetScoreP1) ] []
+                ]
+            , div [ class "sc-set-score" ]
+                [ label [] [ text "player 2 starting score" ]
+                , input [ type_ "number", onInput (SetScoreP2) ] []
+                ]
             ]
-        , div []
-            [ label [] [ text "player 2 starting score" ]
-            , input [ type_ "number", onInput (SetScoreP2) ] []
-            ]
+        , button [ type_ "submit", style [ ( "position", "absolute" ), ( "left", "-99999px" ), ( "top", "0" ) ] ] [ text "" ]
         ]
 
 
