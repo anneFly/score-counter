@@ -8710,7 +8710,7 @@ var _user$project$Main$soundButton = function (model) {
 						_0: _elm_lang$html$Html_Attributes$class('oi'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-high'),
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-low'),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$title('sound'),
@@ -8739,7 +8739,7 @@ var _user$project$Main$soundButton = function (model) {
 						_0: _elm_lang$html$Html_Attributes$class('oi'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-low'),
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-high'),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$title('sound'),

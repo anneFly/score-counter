@@ -238,11 +238,11 @@ soundButton model =
     case model.sound of
         False ->
             a [ onClick (SetSound True) ]
-                [ span [ class "oi", attribute "data-glyph" "volume-high", title "sound" ] [] ]
+                [ span [ class "oi", attribute "data-glyph" "volume-low", title "sound" ] [] ]
 
         True ->
             a [ onClick (SetSound False) ]
-                [ span [ class "oi", attribute "data-glyph" "volume-low", title "sound" ] [] ]
+                [ span [ class "oi", attribute "data-glyph" "volume-high", title "sound" ] [] ]
 
 
 settingsButton : Model -> Html Msg
