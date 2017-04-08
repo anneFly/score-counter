@@ -24,27 +24,6 @@ html, body {
     font-size: 20px;
   }
 }
-.app-orientation-overlay {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 1rem;
-  background: rgba(0,0,0,0.9);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  font-size: 2.5rem;
-  text-align: center;
-}
-@media (orientation: portrait) {
-  .app-orientation-overlay {
-    display: flex;
-  }
-}
 .app-orientation-overlay span {
   font-size: 5rem;
 }
@@ -61,6 +40,11 @@ html, body {
   align-items: center;
   justify-content: space-around;
 }
+@media (orientation: portrait) {
+  .sc-container {
+    flex-direction: column;
+  }
+}
 .sc-col {
   display: flex;
   flex-direction: column;
@@ -69,12 +53,31 @@ html, body {
   height: 97%;
   align-items: center;
 }
+@media (orientation: portrait) {
+  .sc-col {
+    flex-direction: row;
+    width: 97%;
+    height: 40%;
+  }
+}
 .sc-col.sc-p-right {
   flex-direction: column-reverse;
+}
+@media (orientation: portrait) {
+  .sc-col.sc-p-right {
+    flex-direction: row-reverse;
+  }
 }
 .sc-col.sc-middle {
   justify-content: space-around;
   width: 20%;
+}
+@media (orientation: portrait) {
+  .sc-col.sc-middle {
+    flex-direction: row-reverse;
+    height: 20%;
+    width: 100%;
+  }
 }
 .sc-middle a:active span {
   background: #ffff00;
@@ -108,6 +111,15 @@ html, body {
 .sc-p-left .sc-scores {
   flex-direction: row-reverse;
 }
+@media (orientation: portrait) {
+  .sc-scores {
+    flex-direction: column;
+    height: 100%;
+  }
+  .sc-p-left .sc-scores {
+    flex-direction: column-reverse;
+  }
+}
 .sc-score {
   font-size: 3rem;
   font-weight: bold;
@@ -136,6 +148,14 @@ html, body {
   background: #111;
   font-size: 3rem;
 }
+@media (orientation: portrait) {
+  .sc-count-value {
+    top: 40%;
+    bottom: 40%;
+    left: 0;
+    right: 0;
+  }
+}
 .sc-read {
   display: inline-block;
 }
@@ -144,6 +164,14 @@ html, body {
 }
 .sc-p-right .sc-read {
   transform: rotate(270deg);
+}
+@media (orientation: portrait) {
+  .sc-p-left .sc-read {
+    transform: rotate(180deg);
+  }
+  .sc-p-right .sc-read {
+    transform: none;
+  }
 }
 .sc-btn {
   position: absolute;
@@ -154,6 +182,16 @@ html, body {
   font-size: 3rem;
   background: #6161b9;
   color: #111;
+}
+@media (orientation: portrait) {
+  .sc-btn {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: auto;
+    height: 45%;
+    width: 100%;
+  }
 }
 .sc-p-left button:first-child {
   left: 5%;
@@ -174,6 +212,32 @@ html, body {
   left: 5%;
   border-top-left-radius: 100%;
   border-bottom-left-radius: 100%;
+}
+@media (orientation: portrait) {
+  .sc-p-left button:first-child {
+    top: 5%;
+    left: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 100%;
+  }
+  .sc-p-left button:last-child {
+    bottom: 5%;
+    right: 0;
+    border-bottom-left-radius: 100%;
+    border-top-right-radius: 0;
+  }
+  .sc-p-right button:first-child {
+    bottom: 5%;
+    right: 0;
+    border-bottom-left-radius: 100%;
+    border-top-right-radius: 0;
+  }
+  .sc-p-right button:last-child {
+    top: 5%;
+    left: 0;
+    border-top-right-radius: 100%;
+    border-bottom-left-radius: 0;
+  }
 }
 .sc-p-left button:first-child:active,
 .sc-p-right button:first-child:active {
@@ -204,6 +268,11 @@ button:focus {
   justify-content: space-around;
   height: 100%;
   font-size: 1.5rem;
+}
+@media (orientation: portrait) {
+  .sc-settings-container form {
+    flex-direction: column;
+  }
 }
 .sc-settings-container .sc-set-score {
   display: flex;

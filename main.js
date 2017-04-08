@@ -9009,8 +9009,7 @@ var _user$project$Main$mainView = function (model) {
 		});
 };
 var _user$project$Main$view = function (model) {
-	var v = _elm_lang$core$Native_Utils.eq(model.settingsView, true) ? _user$project$Main$settingsView(model) : _user$project$Main$mainView(model);
-	return A2(
+	return _elm_lang$core$Native_Utils.eq(model.settingsView, true) ? A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
@@ -9019,38 +9018,19 @@ var _user$project$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: v,
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('app-orientation-overlay'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$span,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('oi'),
-								_1: {
-									ctor: '::',
-									_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'loop-circular'),
-									_1: {ctor: '[]'}
-								}
-							},
-							{ctor: '[]'}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Please turn your device to landscape mode.'),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_0: _user$project$Main$settingsView(model),
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('app'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$Main$mainView(model),
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Main$main = _elm_lang$html$Html$program(

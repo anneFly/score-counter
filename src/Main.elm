@@ -354,17 +354,7 @@ settingsView model =
 
 view : Model -> Html Msg
 view model =
-    let
-        v =
-            if model.settingsView == True then
-                settingsView model
-            else
-                mainView model
-    in
-        div [ class "app" ]
-            [ v
-            , div [ class "app-orientation-overlay" ]
-                [ span [ class "oi", attribute "data-glyph" "loop-circular" ] []
-                , text "Please turn your device to landscape mode."
-                ]
-            ]
+    if model.settingsView == True then
+        div [ class "app" ] [ settingsView model ]
+    else
+        div [ class "app" ] [ mainView model ]
