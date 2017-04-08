@@ -7,7 +7,46 @@ html, body {
   background: #111;
   color: #f7f7f7;
   font-family: "Electrolize", arial, sans-serif;
-  font-size: 14px;
+  font-size: 24px;
+}
+@media only screen and (max-width: 576px) {
+  html, body {
+    font-size: 12px;
+  }
+}
+@media only screen and (min-width: 577px) and (max-width: 768px) {
+  html, body {
+    font-size: 16px;
+  }
+}
+@media only screen and (min-width: 769px) and (max-width: 992px) {
+  html, body {
+    font-size: 20px;
+  }
+}
+.app-orientation-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background: rgba(0,0,0,0.9);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  font-size: 2.5rem;
+  text-align: center;
+}
+@media (orientation: portrait) {
+  .app-orientation-overlay {
+    display: flex;
+  }
+}
+.app-orientation-overlay span {
+  font-size: 5rem;
 }
 .app {
   width: 100%;
@@ -157,14 +196,14 @@ button:focus {
   top: 0;
   right: 0;
   padding: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 .sc-settings-container form {
   display: flex;
   align-items: center;
   justify-content: space-around;
   height: 100%;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 .sc-settings-container .sc-set-score {
   display: flex;
@@ -173,7 +212,7 @@ button:focus {
   justify-content: center;
 }
 .sc-settings-container input {
-  line-height: 2.2rem;
-  font-size: 2rem;
+  line-height: 1.7rem;
+  font-size: 1.5rem;
   width: 8rem;
 }
