@@ -1,5 +1,5 @@
 .*
 !.gitignore
 
-**/*.old.*
-src/elm-stuff/
+elm-stuff/
+node_modules/
