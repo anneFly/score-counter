@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Html exposing (Html, button, div, text, span, br, a, input, label, form)
 import Html.Events exposing (onClick, onInput, onWithOptions)
-import Html.Attributes exposing (class, title, attribute, href, value, type_, action, style)
+import Html.Attributes exposing (class, title, href, value, type_, action, style)
 import Json.Decode as Json
 
 
@@ -226,11 +226,11 @@ fullScreenButton model =
     case model.fullscreen of
         False ->
             a [ onClick (FullscreenMode True) ]
-                [ span [ class "oi", attribute "data-glyph" "fullscreen-enter", title "fullscreen" ] [] ]
+                [ span [ class "ion-arrow-expand", title "fullscreen" ] [] ]
 
         True ->
             a [ onClick (FullscreenMode False) ]
-                [ span [ class "oi", attribute "data-glyph" "fullscreen-exit", title "fullscreen" ] [] ]
+                [ span [ class "ion-arrow-shrink", title "fullscreen" ] [] ]
 
 
 soundButton : Model -> Html Msg
@@ -238,17 +238,17 @@ soundButton model =
     case model.sound of
         False ->
             a [ onClick (SetSound True) ]
-                [ span [ class "oi", attribute "data-glyph" "volume-low", title "sound" ] [] ]
+                [ span [ class "ion-android-volume-off", title "sound" ] [] ]
 
         True ->
             a [ onClick (SetSound False) ]
-                [ span [ class "oi", attribute "data-glyph" "volume-high", title "sound" ] [] ]
+                [ span [ class "ion-android-volume-up", title "sound" ] [] ]
 
 
 settingsButton : Model -> Html Msg
 settingsButton model =
     a [ onClick (SettingsView True) ]
-        [ span [ class "oi", attribute "data-glyph" "cog", title "settings" ] [] ]
+        [ span [ class "ion-gear-b", title "settings" ] [] ]
 
 
 lastChange : Int -> Html Msg
@@ -335,7 +335,7 @@ settingsView : Model -> Html Msg
 settingsView model =
     div [ class "sc-settings-container" ]
         [ span [ class "sc-close-view", onClick (SettingsView False) ]
-            [ span [ class "oi", attribute "data-glyph" "x", title "close" ] []
+            [ span [ class "ion-close-round", title "close" ] []
             , text " close"
             ]
         , form [ action "#", onDummySubmit ]

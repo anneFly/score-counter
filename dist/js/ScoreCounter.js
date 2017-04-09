@@ -8502,15 +8502,11 @@ var _anneFly$score_counter$Main$settingsButton = function (model) {
 				_elm_lang$html$Html$span,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('oi'),
+					_0: _elm_lang$html$Html_Attributes$class('ion-gear-b'),
 					_1: {
 						ctor: '::',
-						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'cog'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$title('settings'),
-							_1: {ctor: '[]'}
-						}
+						_0: _elm_lang$html$Html_Attributes$title('settings'),
+						_1: {ctor: '[]'}
 					}
 				},
 				{ctor: '[]'}),
@@ -8545,15 +8541,11 @@ var _anneFly$score_counter$Main$settingsView = function (model) {
 						_elm_lang$html$Html$span,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('oi'),
+							_0: _elm_lang$html$Html_Attributes$class('ion-close-round'),
 							_1: {
 								ctor: '::',
-								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'x'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$title('close'),
-									_1: {ctor: '[]'}
-								}
+								_0: _elm_lang$html$Html_Attributes$title('close'),
+								_1: {ctor: '[]'}
 							}
 						},
 						{ctor: '[]'}),
@@ -8707,15 +8699,11 @@ var _anneFly$score_counter$Main$soundButton = function (model) {
 					_elm_lang$html$Html$span,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_0: _elm_lang$html$Html_Attributes$class('ion-android-volume-off'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-low'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$title('sound'),
-								_1: {ctor: '[]'}
-							}
+							_0: _elm_lang$html$Html_Attributes$title('sound'),
+							_1: {ctor: '[]'}
 						}
 					},
 					{ctor: '[]'}),
@@ -8736,15 +8724,11 @@ var _anneFly$score_counter$Main$soundButton = function (model) {
 					_elm_lang$html$Html$span,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_0: _elm_lang$html$Html_Attributes$class('ion-android-volume-up'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'volume-high'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$title('sound'),
-								_1: {ctor: '[]'}
-							}
+							_0: _elm_lang$html$Html_Attributes$title('sound'),
+							_1: {ctor: '[]'}
 						}
 					},
 					{ctor: '[]'}),
@@ -8772,15 +8756,11 @@ var _anneFly$score_counter$Main$fullScreenButton = function (model) {
 					_elm_lang$html$Html$span,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_0: _elm_lang$html$Html_Attributes$class('ion-arrow-expand'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'fullscreen-enter'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
-								_1: {ctor: '[]'}
-							}
+							_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
+							_1: {ctor: '[]'}
 						}
 					},
 					{ctor: '[]'}),
@@ -8801,15 +8781,11 @@ var _anneFly$score_counter$Main$fullScreenButton = function (model) {
 					_elm_lang$html$Html$span,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('oi'),
+						_0: _elm_lang$html$Html_Attributes$class('ion-arrow-shrink'),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-glyph', 'fullscreen-exit'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
-								_1: {ctor: '[]'}
-							}
+							_0: _elm_lang$html$Html_Attributes$title('fullscreen'),
+							_1: {ctor: '[]'}
 						}
 					},
 					{ctor: '[]'}),
