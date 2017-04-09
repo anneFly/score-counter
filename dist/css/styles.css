@@ -173,7 +173,6 @@ html, body {
   .sc-container {
     flex-direction: column; }
   .sc-col {
-    flex-direction: row;
     width: 97%;
     height: 40%; }
     .sc-col .sc-scores {
@@ -185,13 +184,15 @@ html, body {
       left: 0;
       right: 0; }
     .sc-col.sc-p-right {
-      flex-direction: row-reverse; }
+      flex-direction: row; }
       .sc-col.sc-p-right .sc-read {
         transform: none; }
-    .sc-col.sc-p-left .sc-scores {
-      flex-direction: column-reverse; }
-    .sc-col.sc-p-left .sc-read {
-      transform: rotate(180deg); }
+    .sc-col.sc-p-left {
+      flex-direction: row-reverse; }
+      .sc-col.sc-p-left .sc-scores {
+        flex-direction: column-reverse; }
+      .sc-col.sc-p-left .sc-read {
+        transform: rotate(180deg); }
     .sc-col.sc-middle {
       flex-direction: row-reverse;
       height: 20%;

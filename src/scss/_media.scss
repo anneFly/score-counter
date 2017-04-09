@@ -20,7 +20,6 @@
   }
 
   .sc-col {
-    flex-direction: row;
     width: 97%;
     height: 40%;
 
@@ -37,13 +36,14 @@
     }
 
     &.sc-p-right {
-      flex-direction: row-reverse;
+      flex-direction: row;
       .sc-read {
         transform: none;
       }
     }
 
     &.sc-p-left {
+      flex-direction: row-reverse;
       .sc-scores {
         flex-direction: column-reverse;
       }
