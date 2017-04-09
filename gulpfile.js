@@ -15,10 +15,18 @@ gulp.task('elm', ['elm-init'], () => {
 gulp.task('sass', () => {
   return gulp.src('./src/scss/**/*.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./dist/css'));
+    .pipe(gulp.dest('./dist/css/'));
+});
+
+gulp.task('js', () => {
+  return gulp.src('./src/*.js')
+    .pipe(gulp.dest('./dist/js/'));
 });
 
 gulp.task('watch', function () {
   gulp.watch('./src/*.elm', ['elm']);
   gulp.watch('./src/scss/**/*.scss', ['sass']);
+  gulp.watch('./src/*/*.js', ['js']);
 });
+
+gulp.task('build', ['elm', 'sass', 'js']);
