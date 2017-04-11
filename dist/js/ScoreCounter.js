@@ -8341,16 +8341,6 @@ var _anneFly$score_counter$Main$init = {
 	_0: {p1: _anneFly$score_counter$Main$initPlayer, p2: _anneFly$score_counter$Main$initPlayer, fullscreen: false, sound: true, settingsView: false},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _anneFly$score_counter$Main$activateFullscreen = _elm_lang$core$Native_Platform.outgoingPort(
-	'activateFullscreen',
-	function (v) {
-		return v;
-	});
-var _anneFly$score_counter$Main$deactivateFullscreen = _elm_lang$core$Native_Platform.outgoingPort(
-	'deactivateFullscreen',
-	function (v) {
-		return v;
-	});
 var _anneFly$score_counter$Main$playSound = _elm_lang$core$Native_Platform.outgoingPort(
 	'playSound',
 	function (v) {
@@ -8401,37 +8391,37 @@ var _anneFly$score_counter$Main$update = F2(
 					};
 				}
 			case 'FullscreenMode':
-				var _p3 = _p0._0;
-				var m = _elm_lang$core$Native_Utils.update(
-					model,
-					{fullscreen: _p3});
-				return _p3 ? {
+				return {
 					ctor: '_Tuple2',
-					_0: m,
-					_1: _anneFly$score_counter$Main$activateFullscreen('')
-				} : {
-					ctor: '_Tuple2',
-					_0: m,
-					_1: _anneFly$score_counter$Main$deactivateFullscreen('')
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{fullscreen: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SettingsView':
-				var m = _elm_lang$core$Native_Utils.update(
-					model,
-					{settingsView: _p0._0});
-				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{settingsView: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'SetSound':
-				var m = _elm_lang$core$Native_Utils.update(
-					model,
-					{sound: _p0._0});
-				return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{sound: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'SetScoreP1':
 				var p1 = model.p1;
 				var intVal = function () {
-					var _p4 = _elm_lang$core$String$toInt(_p0._0);
-					if (_p4.ctor === 'Err') {
+					var _p3 = _elm_lang$core$String$toInt(_p0._0);
+					if (_p3.ctor === 'Err') {
 						return 0;
 					} else {
-						return _p4._0;
+						return _p3._0;
 					}
 				}();
 				var player1 = _elm_lang$core$Native_Utils.update(
@@ -8444,11 +8434,11 @@ var _anneFly$score_counter$Main$update = F2(
 			case 'SetScoreP2':
 				var p2 = model.p2;
 				var intVal = function () {
-					var _p5 = _elm_lang$core$String$toInt(_p0._0);
-					if (_p5.ctor === 'Err') {
+					var _p4 = _elm_lang$core$String$toInt(_p0._0);
+					if (_p4.ctor === 'Err') {
 						return 0;
 					} else {
-						return _p5._0;
+						return _p4._0;
 					}
 				}();
 				var player2 = _elm_lang$core$Native_Utils.update(
@@ -8683,8 +8673,8 @@ var _anneFly$score_counter$Main$SetSound = function (a) {
 	return {ctor: 'SetSound', _0: a};
 };
 var _anneFly$score_counter$Main$soundButton = function (model) {
-	var _p6 = model.sound;
-	if (_p6 === false) {
+	var _p5 = model.sound;
+	if (_p5 === false) {
 		return A2(
 			_elm_lang$html$Html$a,
 			{
@@ -8740,15 +8730,19 @@ var _anneFly$score_counter$Main$FullscreenMode = function (a) {
 	return {ctor: 'FullscreenMode', _0: a};
 };
 var _anneFly$score_counter$Main$fullScreenButton = function (model) {
-	var _p7 = model.fullscreen;
-	if (_p7 === false) {
+	var _p6 = model.fullscreen;
+	if (_p6 === false) {
 		return A2(
 			_elm_lang$html$Html$a,
 			{
 				ctor: '::',
 				_0: _elm_lang$html$Html_Events$onClick(
 					_anneFly$score_counter$Main$FullscreenMode(true)),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onClick', 'window.activateFullscreen()'),
+					_1: {ctor: '[]'}
+				}
 			},
 			{
 				ctor: '::',
@@ -8773,7 +8767,11 @@ var _anneFly$score_counter$Main$fullScreenButton = function (model) {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Events$onClick(
 					_anneFly$score_counter$Main$FullscreenMode(false)),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'onClick', 'window.deactivateFullscreen()'),
+					_1: {ctor: '[]'}
+				}
 			},
 			{
 				ctor: '::',

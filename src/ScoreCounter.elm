@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Html exposing (Html, button, div, text, span, br, a, input, label, form)
 import Html.Events exposing (onClick, onInput, onWithOptions)
-import Html.Attributes exposing (class, title, href, value, type_, action, style)
+import Html.Attributes exposing (class, title, href, value, type_, action, style, attribute)
 import Json.Decode as Json
 
 
@@ -50,12 +50,6 @@ init =
 
 
 -- Ports
-
-
-port activateFullscreen : String -> Cmd msg
-
-
-port deactivateFullscreen : String -> Cmd msg
 
 
 port playSound : String -> Cmd msg
@@ -148,28 +142,13 @@ update msg model =
                 ( m, playSound sound )
 
         FullscreenMode on ->
-            let
-                m =
-                    { model | fullscreen = on }
-            in
-                if on then
-                    ( m, activateFullscreen "" )
-                else
-                    ( m, deactivateFullscreen "" )
+            ( { model | fullscreen = on }, Cmd.none )
 
         SettingsView on ->
-            let
-                m =
-                    { model | settingsView = on }
-            in
-                ( m, Cmd.none )
+            ( { model | settingsView = on }, Cmd.none )
 
         SetSound on ->
-            let
-                m =
-                    { model | sound = on }
-            in
-                ( m, Cmd.none )
+            ( { model | sound = on }, Cmd.none )
 
         SetScoreP1 val ->
             let
@@ -225,11 +204,11 @@ fullScreenButton : Model -> Html Msg
 fullScreenButton model =
     case model.fullscreen of
         False ->
-            a [ onClick (FullscreenMode True) ]
+            a [ onClick (FullscreenMode True), attribute "onClick" "window.activateFullscreen()" ]
                 [ span [ class "ion-arrow-expand", title "fullscreen" ] [] ]
 
         True ->
-            a [ onClick (FullscreenMode False) ]
+            a [ onClick (FullscreenMode False), attribute "onClick" "window.deactivateFullscreen()" ]
                 [ span [ class "ion-arrow-shrink", title "fullscreen" ] [] ]
 
 
